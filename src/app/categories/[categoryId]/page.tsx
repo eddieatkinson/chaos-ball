@@ -1,5 +1,7 @@
 "use client";
+
 import {
+  ActionIcon,
   Button,
   Card,
   Container,
@@ -7,17 +9,21 @@ import {
   Grid,
   Group,
   Text,
+  Title,
 } from "@/app/components/mantine";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/firebase/config";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useStore } from "@/hooks/useStore";
 import { Category, Player, isPlayer } from "@/app/types";
+import { doc, getDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+
+import { IoIosArrowBack } from "react-icons/io";
+import { db } from "@/firebase/config";
 import { otherSelectedCategory } from "@/app/utils";
+import { useStore } from "@/hooks/useStore";
 
 export default function Page() {
   const { categoryId: id } = useParams();
+  const { back } = useRouter();
   const { players = [], votes, setVotes } = useStore();
   const categoryId = id as string;
   const [category, setCategory] = useState<Category>();
@@ -48,7 +54,13 @@ export default function Page() {
   }
   return (
     <Container>
-      <Text>{category.title}</Text>
+      <Group>
+        <ActionIcon onClick={back}>
+          <IoIosArrowBack />
+        </ActionIcon>
+        <Title>{category.title}</Title>
+      </Group>
+      <Title size="h3">{category.description}</Title>
       <Text>Choose one woman and one man:</Text>
       <Grid>
         {players.map((player) => {
