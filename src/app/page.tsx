@@ -36,7 +36,7 @@ export default function Home() {
   }, [votes]);
   const handleVote = () => {
     if (!haveAllVotesBeenCast) {
-      alert("Please place all 23 votes, Silly Billy!");
+      alert(`Please place all 23 votes, Silly ${playerCookie}!`);
     } else {
       handleSubmitVotes?.();
     }
