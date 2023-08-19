@@ -34,6 +34,13 @@ export default function Home() {
     });
     return numVotes === 23;
   }, [votes]);
+  const handleVote = () => {
+    if (!haveAllVotesBeenCast) {
+      alert("Please place all 23 votes, Silly Billy!");
+    } else {
+      handleSubmitVotes?.();
+    }
+  };
   const handleSetPlayer = () => {
     if (!myPlayer) return;
     setPlayerCookie(myPlayer);
@@ -75,12 +82,13 @@ export default function Home() {
           style={{ backgroundColor: "green" }}
           // disabled={!haveAllVotesBeenCast}
           size="xl"
-          onClick={handleSubmitVotes}
+          onClick={handleVote}
         >
           Submit Votes!
         </Button>
       </Stack>
       <Modal
+        withCloseButton={false}
         title={
           <Title>
             Who <i>are</i> you?
@@ -89,30 +97,38 @@ export default function Home() {
         opened={!playerCookie}
         onClose={() => null}
       >
-        <Title size="h4">Let us know which player you are.</Title>
-        <Grid>
-          {players?.map((player) => (
-            <Grid.Col span={6} key={player.id}>
-              <Button
-                variant={player.name === myPlayer ? "filled" : "outline"}
-                color="green"
-                onClick={() => setMyPlayer(player.name)}
-                {...(player.name === myPlayer
-                  ? { style: { backgroundColor: "green" } }
-                  : {})}
-              >
-                {player.name}
-              </Button>
-            </Grid.Col>
-          ))}
-        </Grid>
-        <Button
-          style={{ backgroundColor: "blue" }}
-          onClick={handleSetPlayer}
-          disabled={!myPlayer}
-        >
-          {myPlayer ? `I am ${myPlayer}!` : "Please choose"}
-        </Button>
+        <Stack>
+          <Grid mt={5}>
+            {players?.map((player) => (
+              <Grid.Col span={4} key={player.id}>
+                <Button
+                  w="100%"
+                  p={0}
+                  variant={player.name === myPlayer ? "filled" : "outline"}
+                  color={player.gender === "f" ? "pink" : "blue"}
+                  onClick={() => setMyPlayer(player.name)}
+                  {...(player.name === myPlayer
+                    ? {
+                        style: {
+                          backgroundColor:
+                            player.gender === "f" ? "pink" : "blue",
+                        },
+                      }
+                    : {})}
+                >
+                  {player.name}
+                </Button>
+              </Grid.Col>
+            ))}
+          </Grid>
+          <Button
+            style={{ backgroundColor: "blue" }}
+            onClick={handleSetPlayer}
+            disabled={!myPlayer}
+          >
+            {myPlayer ? `I am ${myPlayer}!` : "Please choose"}
+          </Button>
+        </Stack>
       </Modal>
     </Container>
   );
