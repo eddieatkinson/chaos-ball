@@ -78,19 +78,44 @@ export default function Page() {
           };
         });
         setCategoriesWithVotes(categoriesWithVotes);
+        const usedPlayers: string[] = [];
         const winners: { [category: string]: { [key in Gender]: string } } = {};
         Object.keys(categoriesWithVotes).forEach((category) => {
+          let winnerF = "";
+          let winnerM = "";
+          if (Object.keys(categoriesWithVotes[category].f ?? {}).length === 1) {
+            winnerF = Object.keys(categoriesWithVotes[category].f ?? "")[0];
+            usedPlayers.push(winnerF);
+          }
+          if (Object.keys(categoriesWithVotes[category].m ?? {}).length === 1) {
+            winnerM = Object.keys(categoriesWithVotes[category].m ?? "")[0];
+            usedPlayers.push(winnerM);
+          }
           winners[category] = {
-            f: "",
-            m: "",
+            f: winnerF,
+            m: winnerM,
           };
         });
+
         players.forEach((player) => {
           const { name, gender } = player;
-          let winningCategory = "Xena";
-          Object.keys(categoriesWithVotes).forEach((category) => {
+          let winningCategory = "Audrey Hepburn";
+          for (let i = 0; i < Object.keys(categoriesWithVotes).length; i++) {
+            const category = Object.keys(categoriesWithVotes)[i];
             let highestVoteCount = 0;
             if (!winners[category]?.[gender]) {
+              if (
+                Object.keys(categoriesWithVotes[category][gender] ?? {})
+                  .filter((name) => !usedPlayers.includes(name))
+                  .includes(name) &&
+                Object.keys(categoriesWithVotes[category][gender] ?? {}).filter(
+                  (name) => !usedPlayers.includes(name)
+                ).length === 1
+              ) {
+                winningCategory = category;
+                usedPlayers.push(name);
+                break;
+              }
               if (
                 categoriesWithVotes[category][gender]?.[name] &&
                 (categoriesWithVotes[category][gender]?.[name] ?? 0) >
@@ -101,9 +126,25 @@ export default function Page() {
                 winningCategory = category;
               }
             }
-          });
-
+          }
+          // Object.keys(categoriesWithVotes).forEach((category) => {
+          //   let highestVoteCount = 0;
+          //   if (!winners[category]?.[gender]) {
+          //     if (
+          //       categoriesWithVotes[category][gender]?.[name] &&
+          //       (categoriesWithVotes[category][gender]?.[name] ?? 0) >
+          //         highestVoteCount
+          //     ) {
+          //       highestVoteCount =
+          //         categoriesWithVotes[category][gender]?.[name] ?? 0;
+          //       winningCategory = category;
+          //     }
+          //   }
+          // });
+          // if (winningCategory) {
+          usedPlayers.push(name);
           winners[winningCategory][gender] = name;
+          // }
         });
         setWinners(winners);
       });
