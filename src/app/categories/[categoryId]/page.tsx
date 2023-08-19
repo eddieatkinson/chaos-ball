@@ -13,8 +13,8 @@ import {
 } from "@/app/components/mantine";
 import { Category, Player, isPlayer } from "@/app/types";
 import { doc, getDoc } from "firebase/firestore";
+import { redirect, useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
 
 import { IoIosArrowBack } from "react-icons/io";
 import { db } from "@/firebase/config";
@@ -24,8 +24,15 @@ import { useStore } from "@/hooks/useStore";
 export default function Page() {
   const { categoryId: id } = useParams();
   const { back } = useRouter();
-  const { players = [], votes, setVotes } = useStore();
-  const categoryId = id as string;
+  const {
+    players = [],
+    votes,
+    setVotes,
+    isExpired,
+    hasVotedCookie,
+  } = useStore();
+  const encodedCategoryId = id as string;
+  const categoryId = decodeURIComponent(encodedCategoryId);
   const [category, setCategory] = useState<Category>();
   useEffect(() => {
     const fetchStuff = async () => {
@@ -49,6 +56,9 @@ export default function Page() {
       });
     }
   };
+  if (isExpired || hasVotedCookie) {
+    redirect("/");
+  }
   if (!category) {
     return <Container>Loading...</Container>;
   }
@@ -58,9 +68,9 @@ export default function Page() {
         <ActionIcon onClick={back}>
           <IoIosArrowBack />
         </ActionIcon>
-        <Title>{category.title}</Title>
+        <Title size="h2">{category.title}</Title>
       </Group>
-      <Title size="h3">{category.description}</Title>
+      <Title size="h4">{category.description}</Title>
       <Text>Choose one woman and one man:</Text>
       <Grid>
         {players.map((player) => {
