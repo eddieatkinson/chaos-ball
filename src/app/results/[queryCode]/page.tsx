@@ -22,7 +22,7 @@ const CORRECT_QUERY_CODE = "0308";
 
 export default function Page() {
   const { queryCode } = useParams();
-  const { players } = useStore();
+  const { allPlayers: players } = useStore();
   // const [newCategories, setNewCategories] = useState<Category[]>([]);
   const [winners, setWinners] = useState<{
     [category: string]: { [key in Gender]: string };

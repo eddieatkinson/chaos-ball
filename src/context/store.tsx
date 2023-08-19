@@ -28,6 +28,7 @@ const EXPIRATION_DATE = "2023-08-20";
 export type StoreContext = {
   categories?: Category[];
   players?: Player[];
+  allPlayers?: Player[];
   votes: VotesObject;
   setVotes: (action: VoteAction) => void;
   playerCookie: string | null;
@@ -41,6 +42,7 @@ export type StoreContext = {
 export const StoreContext = createContext<StoreContext>({
   categories: [],
   players: [],
+  allPlayers: [],
   votes: {},
   setVotes: () => {},
   playerCookie: Cookies.get("player") ?? null,
@@ -70,6 +72,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     {}
   );
   const [players, setPlayers] = useState<Player[]>([]);
+  const [allPlayers, setallPlayers] = useState<Player[]>([]);
   const [playerCookie, _setPlayerCookie] = useState<string | null>(
     Cookies.get("player") ?? null
   );
@@ -95,6 +98,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           }
         });
         setPlayers(players);
+        setallPlayers(players);
       });
       const catQueryRef = collection(db, "categories");
       const cq = query(catQueryRef);
@@ -158,6 +162,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       value={{
         categories,
         players,
+        allPlayers,
         votes,
         setVotes,
         playerCookie,
